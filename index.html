@@ -7,127 +7,127 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #ffffff;
-            --surface: #f8fafc;
-            --text: #0f172a;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --p: #6366f1; --ph: #4f46e5; --bg: #ffffff; --s: #f8fafc;
+            --t: #0f172a; --tl: #64748b; --b: #e2e8f0; --sh: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
-
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a; --s: #1e293b; --t: #f1f5f9; --tl: #94a3b8; --b: #334155;
+            }
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
-
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--t); line-height: 1.6; transition: 0.3s; }
         nav {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 1rem 5%; border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); z-index: 100;
+            padding: 1rem 5%; border-bottom: 1px solid var(--b);
+            position: sticky; top: 0; background: var(--bg); opacity: 0.95; backdrop-filter: blur(12px); z-index: 100;
         }
-
-        .logo { font-weight: 800; font-size: 1.5rem; color: var(--primary); cursor: pointer; letter-spacing: -1px; }
-        .nav-right { display: flex; gap: 1rem; align-items: center; }
-
+        .logo { font-weight: 900; font-size: 1.6rem; color: var(--p); cursor: pointer; letter-spacing: -1.5px; }
         .btn {
-            padding: 0.6rem 1.2rem; border-radius: 8px; border: none; font-weight: 600;
-            cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+            padding: 0.6rem 1.2rem; border-radius: 10px; border: none; font-weight: 600;
+            cursor: pointer; transition: 0.2s; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
         }
-        .btn-p { background: var(--primary); color: white; }
-        .btn-p:hover { background: var(--primary-hover); }
-        .btn-s { background: transparent; border: 1px solid var(--border); color: var(--text); }
-
-        .hero { padding: 4rem 5%; text-align: center; background: var(--surface); border-bottom: 1px solid var(--border); }
-        .hero h1 { font-size: 3rem; margin-bottom: 1rem; letter-spacing: -2px; }
-        .search-wrap { max-width: 600px; margin: 2rem auto; position: relative; }
+        .btn-p { background: var(--p); color: white; }
+        .btn-p:hover { background: var(--ph); transform: translateY(-1px); }
+        .btn-s { background: transparent; border: 1px solid var(--b); color: var(--t); }
+        .btn-danger { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
+        .hero { padding: 6rem 5%; text-align: center; background: radial-gradient(circle at top, var(--s), var(--bg)); }
+        .hero h1 { font-size: 4rem; margin-bottom: 1rem; letter-spacing: -3px; line-height: 0.9; }
+        .search-wrap { max-width: 650px; margin: 2rem auto; position: relative; }
         #search {
-            width: 100%; padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid var(--border);
-            font-size: 1.1rem; outline: none; box-shadow: var(--shadow);
+            width: 100%; padding: 1.2rem 1.8rem; border-radius: 16px; border: 2px solid var(--b);
+            font-size: 1.1rem; outline: none; background: var(--bg); color: var(--t); transition: 0.3s;
         }
-
+        #search:focus { border-color: var(--p); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
         .container { max-width: 1100px; margin: 2rem auto; padding: 0 5%; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
         .card {
-            padding: 1.5rem; border: 1px solid var(--border); border-radius: 12px;
-            cursor: pointer; transition: 0.2s; background: white;
+            padding: 2rem; border: 1px solid var(--b); border-radius: 20px;
+            cursor: pointer; transition: 0.3s; background: var(--bg); display: flex; flex-direction: column;
         }
-        .card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow); }
-        .card h3 { margin-bottom: 0.5rem; }
-        .card p { font-size: 0.9rem; color: var(--text-light); height: 4.5em; overflow: hidden; }
-
-        .view { display: none; animation: slideUp 0.3s ease-out; }
+        .card:hover { border-color: var(--p); transform: translateY(-5px); box-shadow: var(--sh); }
+        .card h3 { font-size: 1.4rem; margin-bottom: 0.8rem; letter-spacing: -0.5px; }
+        .card p { font-size: 1rem; color: var(--tl); height: 4.5em; overflow: hidden; margin-bottom: 1.5rem; }
+        .view { display: none; animation: fadeIn 0.4s ease-out; }
         .active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        #reader h1 { font-size: 3.5rem; margin-bottom: 0.5rem; letter-spacing: -2px; }
-        .meta { padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; color: var(--text-light); }
-        .content-body { font-size: 1.2rem; }
-        .content-body h2 { margin-top: 2rem; }
-
-        #editor input { width: 100%; padding: 1rem; font-size: 2.5rem; border: none; border-bottom: 2px solid var(--border); outline: none; font-weight: 800; margin-bottom: 2rem; }
-        #editor textarea { width: 100%; height: 500px; padding: 1.5rem; border: 1px solid var(--border); border-radius: 12px; font-size: 1.1rem; outline: none; margin-bottom: 2rem; resize: none; }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
-        .modal-c { background: white; padding: 2.5rem; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; }
-        .modal-c input { width: 100%; padding: 0.8rem; margin: 1rem 0; border: 1px solid var(--border); border-radius: 8px; }
-
-        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: #e2e8f0; z-index: 2000; display: none; }
-        #loader-bar { height: 100%; background: var(--primary); width: 0%; transition: 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        #reader h1 { font-size: 4rem; margin-bottom: 1rem; letter-spacing: -3px; line-height: 1; }
+        .meta { padding-bottom: 1.5rem; border-bottom: 1px solid var(--b); margin-bottom: 2.5rem; color: var(--tl); font-weight: 500; }
+        .body-text { font-size: 1.25rem; color: var(--t); opacity: 0.9; }
+        .body-text h2, .body-text h3 { margin: 2rem 0 1rem; letter-spacing: -1px; }
+        .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        #editor input { width: 100%; padding: 1rem 0; font-size: 2.5rem; border: none; border-bottom: 2px solid var(--b); outline: none; font-weight: 800; margin-bottom: 2rem; background: transparent; color: var(--t); }
+        #editor textarea { width: 100%; height: 60vh; padding: 1.5rem; border: 1px solid var(--b); border-radius: 16px; font-size: 1.1rem; outline: none; background: var(--s); color: var(--t); resize: none; font-family: monospace; }
+        .preview-pane { padding: 1.5rem; border: 1px solid var(--b); border-radius: 16px; background: var(--bg); overflow-y: auto; height: 60vh; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px); }
+        .modal-c { background: var(--bg); padding: 3rem; border-radius: 24px; width: 90%; max-width: 450px; text-align: center; border: 1px solid var(--b); }
+        .modal-c input { width: 100%; padding: 1rem; margin: 1.5rem 0; border: 1px solid var(--b); border-radius: 12px; background: var(--s); color: var(--t); }
+        #toast { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 2rem; background: var(--t); color: var(--bg); border-radius: 12px; font-weight: 600; display: none; z-index: 9999; box-shadow: var(--sh); }
+        #loader { position: fixed; top: 0; width: 100%; height: 4px; background: var(--b); z-index: 2000; display: none; }
+        #l-bar { height: 100%; background: var(--p); width: 0%; transition: 0.4s; }
+        @media (max-width: 850px) { .editor-grid { grid-template-columns: 1fr; } .preview-pane { display: none; } #reader h1 { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
 
-<div id="loader"><div id="loader-bar"></div></div>
+<div id="loader"><div id="l-bar"></div></div>
+<div id="toast"></div>
 
 <nav>
-    <div class="logo" onclick="goHome()">Articley</div>
-    <div class="nav-right">
-        <span id="user-info" style="font-weight: 600; font-size: 0.9rem;"></span>
-        <button class="btn btn-s" onclick="checkUser(() => showView('editor'))">Create</button>
-        <button id="join-btn" class="btn btn-p" onclick="modal(true)">Join</button>
+    <div class="logo" onclick="goHome()">Articley.</div>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+        <span id="u-name" style="font-weight: 600; opacity: 0.7;"></span>
+        <button class="btn btn-s" onclick="checkUser(() => showView('editor'))">Write</button>
+        <button id="j-btn" class="btn btn-p" onclick="modal(true)">Join Wiki</button>
     </div>
 </nav>
 
 <div class="container">
     <section id="home" class="view active">
         <div class="hero">
-            <h1>Knowledge for everyone.</h1>
+            <h1>Think. Write.<br>Share Knowledge.</h1>
             <div class="search-wrap">
-                <input type="text" id="search" placeholder="Search articles..." oninput="doSearch(this.value)">
+                <input type="text" id="search" placeholder="Explore articles..." oninput="doSearch(this.value)">
             </div>
         </div>
-        <div id="list" class="grid" style="margin-top: 3rem;"></div>
+        <div id="list" class="grid" style="margin-top: 4rem;"></div>
     </section>
 
     <section id="reader" class="view">
-        <div style="margin-bottom: 2rem; display: flex; gap: 1rem;">
-            <button class="btn btn-s" onclick="goHome()">← Home</button>
-            <button class="btn btn-p" id="edit-btn">Edit Page</button>
+        <div style="margin-bottom: 3rem; display: flex; justify-content: space-between;">
+            <button class="btn btn-s" onclick="goHome()">← Back</button>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-s" id="e-btn">Edit</button>
+                <button class="btn btn-danger" id="d-btn">Delete</button>
+            </div>
         </div>
-        <h1 id="r-title"></h1>
-        <div class="meta">By <span id="r-auth"></span> • <span id="r-date"></span></div>
-        <div id="r-body" class="content-body"></div>
+        <h1 id="r-t"></h1>
+        <div class="meta">Curated by <span id="r-a" style="color: var(--p)"></span> • Updated <span id="r-d"></span></div>
+        <div id="r-b" class="body-text"></div>
     </section>
 
     <section id="editor" class="view">
-        <input type="text" id="e-title" placeholder="Title">
-        <textarea id="e-body" placeholder="Content (Markdown supported)"></textarea>
-        <div style="display: flex; gap: 1rem;">
-            <button class="btn btn-p" onclick="save()">Publish</button>
-            <button class="btn btn-s" onclick="goHome()">Cancel</button>
+        <input type="text" id="et" placeholder="Article Title...">
+        <div class="editor-grid">
+            <textarea id="eb" placeholder="Content (Markdown supported...)" oninput="updatePreview()"></textarea>
+            <div id="ep" class="preview-pane body-text"></div>
+        </div>
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <button class="btn btn-p" onclick="save()">Publish Article</button>
+            <button class="btn btn-s" onclick="goHome()">Discard</button>
         </div>
     </section>
 </div>
 
 <div id="auth-modal" class="modal">
     <div class="modal-c">
-        <h2>Welcome</h2>
-        <p>Pick a username to contribute.</p>
-        <input type="text" id="user-in" placeholder="Username">
-        <button class="btn btn-p" style="width: 100%" onclick="auth()">Get Started</button>
+        <h2>Contributor Access</h2>
+        <p>Pick a unique handle to start writing.</p>
+        <input type="text" id="u-in" placeholder="Username">
+        <button class="btn btn-p" style="width: 100%" onclick="auth()">Start Now</button>
     </div>
 </div>
 
@@ -139,19 +139,17 @@
     };
 
     const { Client, Account, Databases, Query, ID } = Appwrite;
-    const cli = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProject(config.p);
+    const cli = new Client().setEndpoint('https://sfo.cloud.appwrite.io/v1').setProject(config.p);
     const acc = new Account(cli);
     const db = new Databases(cli);
 
-    let user = null;
-    let editId = null;
-    let sTimer = null;
+    let user = null, eid = null, st = null;
 
     async function init() {
         try {
             user = await acc.get();
-            document.getElementById('user-info').innerText = user.name;
-            document.getElementById('join-btn').style.display = 'none';
+            document.getElementById('u-name').innerText = `@${user.name}`;
+            document.getElementById('j-btn').style.display = 'none';
         } catch (e) {}
         getArticles();
     }
@@ -159,74 +157,89 @@
     async function getArticles() {
         loading(true);
         try {
-            const res = await db.listDocuments(config.d, config.c, [Query.orderDesc('$createdAt'), Query.limit(20)]);
+            const res = await db.listDocuments(config.d, config.c, [Query.orderDesc('$createdAt'), Query.limit(24)]);
             render(res.documents);
-        } catch(e) { console.error(e); }
+        } catch(e) { toast(e.message); }
         loading(false);
     }
 
     async function doSearch(q) {
-        clearTimeout(sTimer);
-        sTimer = setTimeout(async () => {
+        clearTimeout(st);
+        st = setTimeout(async () => {
             if(!q) return getArticles();
             const res = await db.listDocuments(config.d, config.c, [Query.search('title', q)]);
             render(res.documents);
         }, 300);
     }
 
-    async function save() {
-        const t = document.getElementById('e-title').value;
-        const b = document.getElementById('e-body').value;
-        if(!t || !b) return;
+    function updatePreview() {
+        document.getElementById('ep').innerHTML = marked.parse(document.getElementById('eb').value || '*Preview will appear here...*');
+    }
 
+    async function save() {
+        const t = document.getElementById('et').value, b = document.getElementById('eb').value;
+        if(!t || !b) return toast("Missing title or content");
         loading(true);
         const data = { title: t, content: b, author_name: user.name };
         try {
-            if(editId) await db.updateDocument(config.d, config.c, editId, data);
+            if(eid) await db.updateDocument(config.d, config.c, eid, data);
             else await db.createDocument(config.d, config.c, ID.unique(), data);
+            toast("Knowledge Shared!");
             goHome();
             getArticles();
-        } catch (e) { alert(e.message); }
+        } catch (e) { toast(e.message); }
         loading(false);
     }
 
-    async function open(id) {
+    async function openDoc(id) {
         loading(true);
         try {
             const doc = await db.getDocument(config.d, config.c, id);
-            document.getElementById('r-title').innerText = doc.title;
-            document.getElementById('r-auth').innerText = doc.author_name;
-            document.getElementById('r-date').innerText = new Date(doc.$updatedAt).toLocaleDateString();
-            document.getElementById('r-body').innerHTML = marked.parse(doc.content);
-            document.getElementById('edit-btn').onclick = () => {
+            document.getElementById('r-t').innerText = doc.title;
+            document.getElementById('r-a').innerText = doc.author_name;
+            document.getElementById('r-d').innerText = new Date(doc.$updatedAt).toLocaleDateString();
+            document.getElementById('r-b').innerHTML = marked.parse(doc.content);
+            
+            document.getElementById('e-btn').onclick = () => {
                 checkUser(() => {
-                    editId = doc.$id;
-                    document.getElementById('e-title').value = doc.title;
-                    document.getElementById('e-body').value = doc.content;
+                    eid = doc.$id;
+                    document.getElementById('et').value = doc.title;
+                    document.getElementById('eb').value = doc.content;
+                    updatePreview();
                     showView('editor');
                 });
             };
+
+            document.getElementById('d-btn').onclick = async () => {
+                if(confirm("Delete this article forever?")) {
+                    await db.deleteDocument(config.d, config.c, id);
+                    toast("Article removed");
+                    goHome();
+                    getArticles();
+                }
+            };
+            
             showView('reader');
-        } catch(e) { alert(e.message); }
+        } catch(e) { toast(e.message); }
         loading(false);
     }
 
     async function auth() {
-        const n = document.getElementById('user-in').value;
+        const n = document.getElementById('u-in').value;
         if(!n) return;
         try {
             await acc.createAnonymousSession();
             await acc.updateName(n);
             location.reload();
-        } catch(e) { alert(e.message); }
+        } catch(e) { toast(e.message); }
     }
 
     function render(docs) {
         document.getElementById('list').innerHTML = docs.map(d => `
-            <div class="card" onclick="open('${d.$id}')">
+            <div class="card" onclick="openDoc('${d.$id}')">
                 <h3>${d.title}</h3>
-                <p>${d.content.substring(0, 150)}...</p>
-                <div style="margin-top:1rem; font-size:0.8rem; color:#64748b">By ${d.author_name}</div>
+                <p>${d.content.substring(0, 160).replace(/[#*`]/g, '')}...</p>
+                <div style="margin-top:auto; font-size:0.85rem; font-weight:600; color:var(--p)">By ${d.author_name}</div>
             </div>
         `).join('');
     }
@@ -234,22 +247,29 @@
     function showView(v) {
         document.querySelectorAll('.view').forEach(s => s.classList.remove('active'));
         document.getElementById(v).classList.add('active');
-        if(v !== 'editor') editId = null;
+        if(v !== 'editor') eid = null;
         window.scrollTo(0,0);
     }
 
     function goHome() { 
-        document.getElementById('e-title').value = '';
-        document.getElementById('e-body').value = '';
+        document.getElementById('et').value = '';
+        document.getElementById('eb').value = '';
+        document.getElementById('ep').innerHTML = '';
         showView('home'); 
     }
     
     function modal(s) { document.getElementById('auth-modal').style.display = s ? 'flex' : 'none'; }
     
+    function toast(m) {
+        const t = document.getElementById('toast');
+        t.innerText = m; t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
+    }
+
     function loading(s) {
-        const b = document.getElementById('loader-bar');
+        const b = document.getElementById('l-bar');
         document.getElementById('loader').style.display = s ? 'block' : 'none';
-        b.style.width = s ? '60%' : '100%';
+        b.style.width = s ? '70%' : '100%';
     }
 
     function checkUser(cb) { if(!user) modal(true); else cb(); }
