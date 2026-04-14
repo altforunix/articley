@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Articley</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -152,20 +153,22 @@
             document.getElementById('user-info').innerText = user.name;
             document.getElementById('join-btn').style.display = 'none';
         } catch (e) {}
-        fetch();
+        getArticles();
     }
 
-    async function fetch() {
+    async function getArticles() {
         loading(true);
-        const res = await db.listDocuments(config.d, config.c, [Query.orderDesc('$createdAt'), Query.limit(20)]);
-        render(res.documents);
+        try {
+            const res = await db.listDocuments(config.d, config.c, [Query.orderDesc('$createdAt'), Query.limit(20)]);
+            render(res.documents);
+        } catch(e) { console.error(e); }
         loading(false);
     }
 
     async function doSearch(q) {
         clearTimeout(sTimer);
         sTimer = setTimeout(async () => {
-            if(!q) return fetch();
+            if(!q) return getArticles();
             const res = await db.listDocuments(config.d, config.c, [Query.search('title', q)]);
             render(res.documents);
         }, 300);
@@ -182,36 +185,40 @@
             if(editId) await db.updateDocument(config.d, config.c, editId, data);
             else await db.createDocument(config.d, config.c, ID.unique(), data);
             goHome();
-            fetch();
+            getArticles();
         } catch (e) { alert(e.message); }
         loading(false);
     }
 
     async function open(id) {
         loading(true);
-        const doc = await db.getDocument(config.d, config.c, id);
-        document.getElementById('r-title').innerText = doc.title;
-        document.getElementById('r-auth').innerText = doc.author_name;
-        document.getElementById('r-date').innerText = new Date(doc.$updatedAt).toLocaleDateString();
-        document.getElementById('r-body').innerHTML = marked.parse(doc.content);
-        document.getElementById('edit-btn').onclick = () => {
-            checkUser(() => {
-                editId = doc.$id;
-                document.getElementById('e-title').value = doc.title;
-                document.getElementById('e-body').value = doc.content;
-                showView('editor');
-            });
-        };
-        showView('reader');
+        try {
+            const doc = await db.getDocument(config.d, config.c, id);
+            document.getElementById('r-title').innerText = doc.title;
+            document.getElementById('r-auth').innerText = doc.author_name;
+            document.getElementById('r-date').innerText = new Date(doc.$updatedAt).toLocaleDateString();
+            document.getElementById('r-body').innerHTML = marked.parse(doc.content);
+            document.getElementById('edit-btn').onclick = () => {
+                checkUser(() => {
+                    editId = doc.$id;
+                    document.getElementById('e-title').value = doc.title;
+                    document.getElementById('e-body').value = doc.content;
+                    showView('editor');
+                });
+            };
+            showView('reader');
+        } catch(e) { alert(e.message); }
         loading(false);
     }
 
     async function auth() {
         const n = document.getElementById('user-in').value;
         if(!n) return;
-        await acc.createAnonymousSession();
-        await acc.updateName(n);
-        location.reload();
+        try {
+            await acc.createAnonymousSession();
+            await acc.updateName(n);
+            location.reload();
+        } catch(e) { alert(e.message); }
     }
 
     function render(docs) {
